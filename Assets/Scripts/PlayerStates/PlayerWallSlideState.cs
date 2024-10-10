@@ -38,10 +38,10 @@ public class PlayerWallSlideState : PlayerState
             player.SetVelocity(0, rb.velocity.y * .7f);
         }
 
-        if (xInput != 0 && player.facingDir != xInput)
-        {
-            stateMachine.ChangeState(player.idleState);
-        }
+        //if (xInput != 0 && player.facingDir != xInput)
+        //{
+        //    stateMachine.ChangeState(player.idleState);
+        //}
 
         if (player.IsGroundDetected() || !player.IsWallDetected())
         {
