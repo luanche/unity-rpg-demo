@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Entity
 {
     [Header("Attack info")]
     public Vector2[] attackMovements;
@@ -16,20 +16,6 @@ public class Player : MonoBehaviour
     public float dashDuration;
     public float dashDir { get; private set; }
 
-    [Header("Collision info")]
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckDistance;
-    [SerializeField] private Transform wallCheck;
-    [SerializeField] private float wallCheckDistance;
-    [SerializeField] private LayerMask whatIsGround;
-
-    public int facingDir { get; private set; } = 1;
-
-    #region Components
-    public Animator anim { get; private set; }
-    public Rigidbody2D rb { get; private set; }
-    #endregion
-
     #region States
     public PlayerStateMachine stateMachine { get; private set; }
     public PlayerIdleState idleState { get; private set; }
@@ -42,8 +28,9 @@ public class Player : MonoBehaviour
     public PlayerPrimaryAttackState primaryAttackState { get; private set; }
     #endregion
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         stateMachine = new PlayerStateMachine();
 
         idleState = new PlayerIdleState(this, stateMachine, "Idle");
@@ -53,22 +40,23 @@ public class Player : MonoBehaviour
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         wallSlideState = new PlayerWallSlideState(this, stateMachine, "WallSlide");
         wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
-
         primaryAttackState = new PlayerPrimaryAttackState(this, stateMachine, "Attack");
     }
 
-    private void Start()
+    protected override void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+        base.Start();
         stateMachine.Initialize(idleState);
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         stateMachine.currentState.Update();
         CheckForDashInput();
     }
+
+    public void AnimationTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 
     public void CheckForDashInput()
     {
@@ -85,47 +73,4 @@ public class Player : MonoBehaviour
         }
     }
 
-    #region Velocity
-    public void ZeroVelocity() => SetVelocity(0, 0);
-
-    public void SetVelocity(float _xVelocity, float _yVelocity)
-    {
-        rb.velocity = new Vector2(_xVelocity, _yVelocity);
-        FlipController(_xVelocity);
-    }
-    #endregion
-
-    #region Collision
-
-    public bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
-    public bool IsWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
-        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance * facingDir, wallCheck.position.y));
-    }
-    #endregion
-
-    #region Flip
-    public void Flip()
-    {
-        facingDir *= -1;
-        transform.Rotate(0, 180, 0);
-    }
-
-    public void FlipController(float x)
-    {
-        if (x > 0 && facingDir < 0)
-        {
-            Flip();
-        }
-        else if (x < 0 && facingDir > 0)
-        {
-            Flip();
-        }
-    }
-    #endregion
-
-    public void AnimationTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 }

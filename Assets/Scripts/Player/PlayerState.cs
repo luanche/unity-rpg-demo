@@ -18,8 +18,8 @@ public class PlayerState
 
     public PlayerState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName)
     {
-        stateMachine = _stateMachine;
         player = _player;
+        stateMachine = _stateMachine;
         animBoolName = _animBoolName;
     }
 
