@@ -13,7 +13,7 @@ public class SkeletonBattleState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        player = GameObject.Find("Player").gameObject;
+        player = PlayerManager.instance.player.gameObject;
     }
 
     public override void Exit()
