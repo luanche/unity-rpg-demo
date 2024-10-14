@@ -53,5 +53,10 @@ public class PlayerPrimaryAttackState : PlayerState
         {
             stateMachine.ChangeState(player.idleState);
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            stateMachine.ChangeState(player.counterAttackState);
+        }
     }
 }
