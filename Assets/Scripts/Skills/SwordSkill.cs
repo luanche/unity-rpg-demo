@@ -1,13 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+
+public enum SwordType
+{
+    Regular,
+    Bounce,
+    Pierce,
+    Spin
+}
 
 public class SwordSkill : Skill
 {
+    public SwordType swordType = SwordType.Regular;
+
     [Header("Sword skill info")]
     [SerializeField] private GameObject swordPrefab;
     [SerializeField] private Vector2 launchForce;
     [SerializeField] private float swordGravity;
+
+    [Header("Bounce info")]
+    [SerializeField] private int bounceAmount;
+    [SerializeField] private float bounceGravity;
+
+    [Header("Peirce info")]
+    [SerializeField] private int peirceAmount;
+    [SerializeField] private float peirceGravity;
+
+    [Header("Spin info")]
+    [SerializeField] private float hitCoolDown;
+    [SerializeField] private float maxTravelDistance;
+    [SerializeField] private float spinDuration;
+    [SerializeField] private float spinGravity;
 
     private Vector2 finalDir;
 
@@ -25,15 +48,34 @@ public class SwordSkill : Skill
         GenerateDots();
     }
 
+    private void SetupGravity()
+    {
+        switch (swordType)
+        {
+            case SwordType.Bounce:
+                swordGravity = bounceGravity;
+                break;
+            case SwordType.Pierce:
+                swordGravity = peirceGravity;
+                break;
+            case SwordType.Spin: 
+                swordGravity = spinGravity;
+                break;
+            default:
+                break;
+        }
+    }
+     
     protected override void Update()
     {
         base.Update();
+        SetupGravity();
         if (Input.GetKeyUp(KeyCode.Mouse1))
         {
-            finalDir = AimDirection().normalized * launchForce;
+            finalDir = AimDirection() * launchForce;
         }
 
-        if(Input.GetKey(KeyCode.Mouse1))
+        if (Input.GetKey(KeyCode.Mouse1))
         {
             for (int i = 0; i < dots.Length; i++)
             {
@@ -45,20 +87,36 @@ public class SwordSkill : Skill
     public void CreateSword()
     {
         GameObject newSword = Instantiate(swordPrefab, player.transform.position, transform.rotation);
-        SwordSkillController newSwordController = newSword.GetComponent<SwordSkillController>();
+        SwordSkillController controller = newSword.GetComponent<SwordSkillController>();
 
-        newSwordController.SetupSword(finalDir, swordGravity, player);
+        switch (swordType)
+        {
+            case SwordType.Bounce:
+                controller.SetupBounce(true, bounceAmount);
+                break;
+            case SwordType.Pierce:
+                controller.SetupPierce(peirceAmount);
+                break;
+            case SwordType.Spin:
+                controller.SetupSpin(true, maxTravelDistance, spinDuration, hitCoolDown);
+                break;
+            default:
+                break;
+        }
+
+        controller.SetupSword(finalDir, swordGravity, player);
 
         player.AssignNewSword(newSword);
 
         DotsActive(false);
     }
 
+    #region Aim
     public Vector2 AimDirection()
     {
         Vector2 playerPosition = player.transform.position;
         Vector2 mousePostion = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        return mousePostion - playerPosition;
+        return (mousePostion - playerPosition).normalized;
     }
 
     public void DotsActive(bool _isActive)
@@ -82,7 +140,8 @@ public class SwordSkill : Skill
     private Vector2 DotsPosition(float t)
     {
         return (Vector2)player.transform.position +
-            (AimDirection().normalized * launchForce) * t +
+            (AimDirection() * launchForce) * t +
             .5f * (Physics2D.gravity * swordGravity) * (t * t);
     }
+    #endregion
 }

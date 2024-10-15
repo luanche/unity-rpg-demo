@@ -70,12 +70,11 @@ public class Entity : MonoBehaviour
             SetVelocity(0, 0);
     }
 
-    public void SetVelocity(float _xVelocity, float _yVelocity)
+    public void SetVelocity(float _xVelocity, float _yVelocity, bool _flip = true)
     {
         if (isKnocked) return;
-
         rb.velocity = new Vector2(_xVelocity, _yVelocity);
-        FlipController(_xVelocity);
+        if(_flip) FlipController(_xVelocity);
     }
     #endregion
 
