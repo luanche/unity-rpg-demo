@@ -13,14 +13,17 @@ public class SwordSkill : Skill
 {
     public SwordType swordType = SwordType.Regular;
 
-    [Header("Sword skill info")]
+    [Header("Skill info")]
     [SerializeField] private GameObject swordPrefab;
     [SerializeField] private Vector2 launchForce;
     [SerializeField] private float swordGravity;
+    [SerializeField] private float freezeTimeDuration;
+    [SerializeField] private float returnSpeed;
 
     [Header("Bounce info")]
     [SerializeField] private int bounceAmount;
     [SerializeField] private float bounceGravity;
+    [SerializeField] private float bounceSpeed;
 
     [Header("Peirce info")]
     [SerializeField] private int peirceAmount;
@@ -92,7 +95,7 @@ public class SwordSkill : Skill
         switch (swordType)
         {
             case SwordType.Bounce:
-                controller.SetupBounce(true, bounceAmount);
+                controller.SetupBounce(true, bounceAmount, bounceSpeed);
                 break;
             case SwordType.Pierce:
                 controller.SetupPierce(peirceAmount);
@@ -104,7 +107,7 @@ public class SwordSkill : Skill
                 break;
         }
 
-        controller.SetupSword(finalDir, swordGravity, player);
+        controller.SetupSword(finalDir, swordGravity, player, freezeTimeDuration, returnSpeed);
 
         player.AssignNewSword(newSword);
 
