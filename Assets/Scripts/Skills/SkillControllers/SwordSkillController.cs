@@ -178,11 +178,7 @@ public class SwordSkillController : MonoBehaviour
 
         if (isReturning) return;
 
-        if(collision.GetComponent<Enemy>() != null)
-        {
-            Enemy enemy = collision.GetComponent<Enemy>();
-            SwordSkillDamage(enemy);
-        }
+        SwordSkillDamage(collision.GetComponent<Enemy>());
 
         SetupForBounce(collision);
         StuckInto(collision);

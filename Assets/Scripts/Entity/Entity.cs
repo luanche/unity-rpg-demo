@@ -9,6 +9,7 @@ public class Entity : MonoBehaviour
     public Animator anim { get; private set; }
     public Rigidbody2D rb { get; private set; }
     public EntityFX fx { get; private set; }
+    public SpriteRenderer sr { get; private set; }
     #endregion
 
     [Header("Knock Back info")]
@@ -36,8 +37,9 @@ public class Entity : MonoBehaviour
     protected virtual void Start()
     {
         anim = GetComponentInChildren<Animator>();
+        sr = GetComponentInChildren<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
-        fx = GetComponentInChildren<EntityFX>();
+        fx = GetComponent<EntityFX>();
     }
 
     protected virtual void Update()
@@ -74,7 +76,7 @@ public class Entity : MonoBehaviour
     {
         if (isKnocked) return;
         rb.velocity = new Vector2(_xVelocity, _yVelocity);
-        if(_flip) FlipController(_xVelocity);
+        if (_flip) FlipController(_xVelocity);
     }
     #endregion
 
@@ -111,4 +113,9 @@ public class Entity : MonoBehaviour
         }
     }
     #endregion
+
+    public void MakeTransparent(bool _transparent)
+    {
+        sr.color = _transparent ? Color.clear : Color.white;
+    }
 }

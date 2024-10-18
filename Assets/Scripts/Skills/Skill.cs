@@ -23,6 +23,7 @@ public class Skill : MonoBehaviour
         if (coolDownTimer < 0) {
 
             coolDownTimer = coolDown;
+            useSkill();
             return true;
         }
 
