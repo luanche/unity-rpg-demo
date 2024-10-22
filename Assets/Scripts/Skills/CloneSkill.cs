@@ -13,6 +13,6 @@ public class CloneSkill : Skill
     public void CreateClone(Transform _cloneTransform, Vector3 _offset = default)
     {
         GameObject newClone = Instantiate(clonePrefab);
-        newClone.GetComponent<CloneSkillController>().SetupClone(_cloneTransform, cloneDuration, canAttack, _offset);
+        newClone.GetComponent<CloneSkillController>().SetupClone(_cloneTransform, cloneDuration, canAttack, _offset, FindClosestEnemy(newClone.transform));
     }
 }

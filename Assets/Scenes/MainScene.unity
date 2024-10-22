@@ -513,6 +513,7 @@ GameObject:
   - component: {fileID: 204413853}
   - component: {fileID: 204413854}
   - component: {fileID: 204413855}
+  - component: {fileID: 204413856}
   m_Layer: 0
   m_Name: SkillManager
   m_TagString: Untagged
@@ -628,6 +629,32 @@ MonoBehaviour:
   maxSize: 15
   growSpeed: 3
   shrinkSpeed: 6
+--- !u!114 &204413856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204413849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 489642b49635e3648bb695900b8a2f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coolDown: 0
+  crystalDuration: 1.5
+  crystalPrefab: {fileID: 7444018570655528046, guid: eacb0f1ec4c39b543b4311fc1faadfb8, type: 3}
+  canExplode: 1
+  canMoveToEnemy: 1
+  moveSpeed: 4
+  canUseMultiStacks: 1
+  amountOfStacks: 3
+  multiStackCooldown: 4
+  useTimeWindow: 2.5
+  crystalList:
+  - {fileID: 7444018570655528046, guid: eacb0f1ec4c39b543b4311fc1faadfb8, type: 3}
+  - {fileID: 7444018570655528046, guid: eacb0f1ec4c39b543b4311fc1faadfb8, type: 3}
+  - {fileID: 7444018570655528046, guid: eacb0f1ec4c39b543b4311fc1faadfb8, type: 3}
 --- !u!1 &205594136
 GameObject:
   m_ObjectHideFlags: 0

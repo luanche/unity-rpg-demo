@@ -12,6 +12,8 @@ public class CloneSkillController : MonoBehaviour
     [SerializeField] private Transform attackCheck;
     [SerializeField] private float attackCheckRadius = .8f;
 
+    private Transform closetEnemy;
+
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
@@ -32,7 +34,7 @@ public class CloneSkillController : MonoBehaviour
         }
     }
 
-    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset)
+    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset, Transform _closetEnemy)
     {
         if (_canAttack)
         {
@@ -42,6 +44,7 @@ public class CloneSkillController : MonoBehaviour
         FaceCloseTarget();
 
         cloneTimer = _cloneDuration;
+        closetEnemy = _closetEnemy;
     }
 
     private void AnimationTrigger()
@@ -63,28 +66,9 @@ public class CloneSkillController : MonoBehaviour
 
     private void FaceCloseTarget()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 25);
-
-        float closetDistance = Mathf.Infinity;
-        Transform closetTransform = null;
-
-        foreach (var hit in colliders)
+        if (closetEnemy != null)
         {
-            if (hit.GetComponent<Enemy>() != null)
-            {
-                float distanceToEnemy = Vector2.Distance(transform.position, hit.transform.position);
-
-                if (distanceToEnemy < closetDistance)
-                {
-                    closetDistance = distanceToEnemy;
-                    closetTransform = hit.transform;
-                }
-            }
-        }
-
-        if (closetTransform != null)
-        {
-            if (transform.position.x > closetTransform.position.x)
+            if (transform.position.x > closetEnemy.position.x)
             {
                 transform.Rotate(0, 180, 0);
             }
