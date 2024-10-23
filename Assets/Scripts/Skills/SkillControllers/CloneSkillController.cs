@@ -13,6 +13,10 @@ public class CloneSkillController : MonoBehaviour
     [SerializeField] private float attackCheckRadius = .8f;
 
     private Transform closetEnemy;
+    private int facingDir = 1;
+
+    private bool canDuplicateClone;
+    private float changeToDuplicate;
 
     private void Awake()
     {
@@ -34,17 +38,19 @@ public class CloneSkillController : MonoBehaviour
         }
     }
 
-    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset, Transform _closetEnemy)
+    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, bool _canDuplicateClone, float _changeToDuplicate, Vector3 _offset, Transform _closetEnemy)
     {
         if (_canAttack)
         {
             anim.SetInteger("AttackNumber", Random.Range(1, 4));
         }
         transform.position = _newTransform.position + _offset;
-        FaceCloseTarget();
 
         cloneTimer = _cloneDuration;
         closetEnemy = _closetEnemy;
+        canDuplicateClone = _canDuplicateClone;
+        changeToDuplicate = _changeToDuplicate;
+        FaceCloseTarget();
     }
 
     private void AnimationTrigger()
@@ -60,6 +66,13 @@ public class CloneSkillController : MonoBehaviour
             if (hit.GetComponent<Enemy>() != null)
             {
                 hit.GetComponent<Enemy>().Damage();
+                if (canDuplicateClone)
+                {
+                    if (Random.Range(0, 100) < changeToDuplicate * 100)
+                    {
+                        SkillManager.instance.clone.CreateClone(hit.transform, new Vector3(.5f * facingDir, 0));
+                    }
+                }
             }
         }
     }
@@ -70,6 +83,7 @@ public class CloneSkillController : MonoBehaviour
         {
             if (transform.position.x > closetEnemy.position.x)
             {
+                facingDir = -1;
                 transform.Rotate(0, 180, 0);
             }
         }

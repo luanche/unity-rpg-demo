@@ -26,7 +26,9 @@ public class BlackHoleSkillController : MonoBehaviour
     private List<GameObject> targets = new();
     private List<GameObject> createdHotKeys = new();
 
-    public bool playerCanExitState {  get; private set; }
+    public bool playerCanExitState { get; private set; }
+
+    private bool playerCanDisapear;
 
     public void SetupBlackHole(float _maxSize, float _growSpeed, float _shrinkSpeed, int _amountOfAttacks, float _cloneAttackCoolDown, float _blackHoleDuration)
     {
@@ -36,6 +38,9 @@ public class BlackHoleSkillController : MonoBehaviour
         amountOfAttacks = _amountOfAttacks;
         cloneAttackCoolDown = _cloneAttackCoolDown;
         blackHoleTimer = _blackHoleDuration;
+        playerCanExitState = true;
+        if (SkillManager.instance.clone.crystalInsteadOfClone)
+            playerCanExitState = false;
     }
 
     private void Update()
@@ -43,7 +48,7 @@ public class BlackHoleSkillController : MonoBehaviour
         cloneAttackTimer -= Time.deltaTime;
         blackHoleTimer -= Time.deltaTime;
 
-        if(blackHoleTimer < 0 )
+        if (blackHoleTimer < 0)
         {
             blackHoleTimer = Mathf.Infinity;
             if (targets.Count > 0)
@@ -80,11 +85,16 @@ public class BlackHoleSkillController : MonoBehaviour
 
     private void ReleaseCloneAttack()
     {
-        if (cloneAttackReleased || targets.Count <=0 ) return;
+        if (cloneAttackReleased || targets.Count <= 0) return;
         DestroyHotKeys();
         cloneAttackReleased = true;
         canCreateHotKeys = false;
-        PlayerManager.instance.player.MakeTransparent(true);
+        if (playerCanDisapear)
+        {
+            playerCanDisapear = false;
+            PlayerManager.instance.player.MakeTransparent(true);
+
+        }
     }
 
     private void CloneAttackLogic()
@@ -93,7 +103,16 @@ public class BlackHoleSkillController : MonoBehaviour
         {
             cloneAttackTimer = cloneAttackCoolDown;
             float xOffset = Random.Range(0, 2) == 0 ? offset : -offset;
-            SkillManager.instance.clone.CreateClone(targets[Random.Range(0, targets.Count)].transform, new Vector2(xOffset, 0));
+
+            if (SkillManager.instance.clone.crystalInsteadOfClone)
+            {
+                SkillManager.instance.crystal.CreateCrystal();
+                SkillManager.instance.crystal.CurrentCrystalChooseRandomTarget();
+            }
+            else
+            {
+                SkillManager.instance.clone.CreateClone(targets[Random.Range(0, targets.Count)].transform, new Vector2(xOffset, 0));
+            }
 
             amountOfAttacks--;
             if (amountOfAttacks <= 0)
